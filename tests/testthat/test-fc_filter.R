@@ -78,3 +78,32 @@ test_that("errors informatively with nonexistent group", {
     error = TRUE
   )
 })
+
+
+
+test_that("can produce a flowchart with formatted 'N =' portions", {
+  testthat::skip(message = "Skipping as only here to demonstrate changes")
+  # OLD
+  fc <- rbind(safo, safo) |>
+    as_fc(label = expression(paste("Patients ", italic("assessed"), " for ", bold("eligibility"))),
+          bold_n = TRUE) |>
+    fc_filter(filter = chronic_heart_failure == "No",
+              label = "No chronic heart failure",
+              label_exc = "Chronic heart failure",
+              text_pattern = "{n} ({perc}%)",
+              text_pattern_exc = "{n} ({perc}%)",
+              show_exc = TRUE) |>
+    fc_draw()
+  # NEW
+  devtools::load_all()
+  fc <- rbind(safo, safo) |>
+    as_fc(label = expression(paste("Patients ", italic("assessed"), " for ", bold("eligibility"))),
+          bold_n = TRUE) |>
+    fc_filter(filter = chronic_heart_failure == "No",
+              label = expression(paste(italic("No chronic"), bold(" heart failure"))),
+              label_exc = expression(paste(bold("Chronic"), " heart failure")),
+              text_pattern = expression(paste(N, " = ", bold("{n}"), "/{N}: ", italic("{perc}"), "%")),
+              text_pattern_exc = expression(paste(bold("{n}"), "({perc})%")),
+              show_exc = TRUE) |>
+    fc_draw()
+})
